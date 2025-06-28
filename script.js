@@ -6,7 +6,7 @@
 // @match       https://avistaz.to/torrents
 // @match       https://avistaz.to/torrents?*
 // @match       https://avistaz.to/torrents/*
-// @version     1.0
+// @version     1.1
 // @require     https://code.jquery.com/jquery-3.7.1.slim.min.js
 // @grant       GM_setValue
 // @grant       GM_getValue
@@ -101,12 +101,14 @@ function hasFilteredAudioLanguages(torrent) {
 const getTitle = e => e
   .find(".torrent-filename")
   .text()
+  .trim()
   .replace(/[\r\n]/g, "")
+  .replace(/^\[[^\]]+\]/, "")
   .trim();
 
 const getName = e => getTitle(e)
   .replace(/\(.*\s*BATCH\)?/, "")
-  .replace(/\(?((20\d\d|19\d\d)(?:(?!\s*BATCH|:.*)))\)?.*/, "\($1\)")
+  .replace(/\[?\(?((20\d\d|19\d\d)(?:(?!\s*BATCH|:.*)))\)?\]?.*/, "\($1\)")
   .replace(/(S\d\dE\d+\b|S\d\d\b|\bE\d+\b).*/, "")
   .replace(/\.(?!\s)/g, " ")
   .replace(/\s+/g, " ")
@@ -140,8 +142,10 @@ for (let r_element of $("table:first tbody tr").get()) {
   const n = getName(r);
 
   r.find(".torrent-filename").html((i, h) => h
+    .trim()
     .replace(/[\r\n]/g, "")
-    .replace(/\(?((20\d\d|19\d\d)(?:(?!\s*BATCH|:.*)))\)?/, "\($1\)")
+    .replace(/^\[[^\]]+\]/, "")
+    .replace(/\[?\(?((20\d\d|19\d\d)(?:(?!\s*BATCH|:.*)))\)?\]?/, "\($1\)")
     .replace(/\.(?!\s)/g, " ")
     .replace(/\s+/g, " ")
     .trim()
